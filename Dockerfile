@@ -1,6 +1,7 @@
 # Multistage - Builder
-FROM maven:3.5.0-jdk-8-alpine as s3proxy-builder
-LABEL maintainer="Andrew Gaul <andrew@gaul.org>"
+#FROM maven:3.5.0-jdk-8-alpine as s3proxy-builder
+FROM registry.access.redhat.com/ubi8/openjdk-11 as s3proxy-builder
+LABEL maintainer="Christian Kirchknopf <christian.kirchknopf@atos.net>"
 
 WORKDIR /opt/s3proxy
 COPY . /opt/s3proxy/
@@ -9,7 +10,7 @@ RUN mvn package -DskipTests
 
 # Multistage - Image
 FROM openjdk:8-jre-alpine
-LABEL maintainer="Andrew Gaul <andrew@gaul.org>"
+LABEL maintainer="Christian Kirchknopf <christian.kirchknopf@atos.net>"
 
 WORKDIR /opt/s3proxy
 
@@ -21,7 +22,7 @@ COPY \
 
 ENV \
     LOG_LEVEL="info" \
-    S3PROXY_AUTHORIZATION="aws-v2-or-v4" \
+    S3PROXY_AUTHORIZATION="aws-v4" \
     S3PROXY_ENDPOINT="http://0.0.0.0:80" \
     S3PROXY_IDENTITY="local-identity" \
     S3PROXY_CREDENTIAL="local-credential" \
